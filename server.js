@@ -5,10 +5,14 @@
 var express = require('express');
 var app = express();
 
+
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
 var cors = require('cors');
 app.use(cors({optionSuccessStatus: 200}));  // some legacy browsers choke on 204
+
+var headerParser = require('header-parser');
+app.use(headerParser);
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
@@ -24,7 +28,12 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-
+app.get("/api/whoami", function(req, res) {
+  var ipadress = req.ip;
+  var language = req.get('Accept-Language');
+  var software = req.get('User-Agent');
+  res.json({"ipaddress": ipadress, "language": language, "software": software});
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
